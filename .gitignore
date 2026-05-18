@@ -1,0 +1,43 @@
+# OS and editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!*.env.example
+
+# Local todo workspace
+todo/
+
+# Go
+bin/
+coverage.out
+*.test
+backend/tmp/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Docker volumes and local data
+docker/data/
+docker/postgres/data/
+docker/minio/data/
+
+# Test outputs
+testing/output/
+testing/reports/

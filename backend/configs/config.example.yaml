@@ -1,0 +1,25 @@
+app:
+  name: tms-api
+  env: dev
+  port: 8080
+
+database:
+  host: localhost
+  port: 5432
+  name: tms
+  user: tms
+  password: change_me
+
+redis:
+  host: localhost
+  port: 6379
+
+rabbitmq:
+  url: amqp://guest:guest@localhost:5672/
+
+minio:
+  endpoint: localhost:9000
+  accessKey: minioadmin
+  secretKey: change_me
+  bucket: tms-dev
+  useSSL: false
