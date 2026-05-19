@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  backend:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: tms
+          POSTGRES_USER: tms
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_NAME: tms
+      DB_USER: tms
+      DB_PASSWORD: test
+      DB_SSLMODE: disable
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Create uuid-ossp extension
+        run: PGPASSWORD=test psql -h localhost -U tms -d tms -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp"'
+      - name: Run tests
+        run: cd backend && go test ./... -v -cover
+      - name: Run go vet
+        run: cd backend && go vet ./...
+
+  frontend:
+    name: Frontend Checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: cd frontend && npm ci
+      - name: Type check
+        run: cd frontend && npm run typecheck
+      - name: Lint
+        run: cd frontend && npm run lint
