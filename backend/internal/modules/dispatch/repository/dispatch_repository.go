@@ -15,10 +15,10 @@ type DispatchRepository interface {
 	Create(ctx context.Context, plan *model.DispatchPlan) error
 	UpdateStatus(ctx context.Context, id uuid.UUID, status string) error
 	UpdateDetail(ctx context.Context, id uuid.UUID, detail *model.DispatchDetail) error
-	FindPendingOrders(ctx context.Context) ([]pendingOrder, error)
+	FindPendingOrders(ctx context.Context) ([]PendingOrder, error)
 }
 
-type pendingOrder struct {
+type PendingOrder struct {
 	ID     uuid.UUID `json:"id"`
 	OrderNo string   `json:"orderNo"`
 	OriginName string `json:"originName"`
@@ -68,8 +68,8 @@ func (r *dispatchRepository) UpdateStatus(ctx context.Context, id uuid.UUID, sta
 		Update("status", status).Error
 }
 
-func (r *dispatchRepository) FindPendingOrders(ctx context.Context) ([]pendingOrder, error) {
-	var orders []pendingOrder
+func (r *dispatchRepository) FindPendingOrders(ctx context.Context) ([]PendingOrder, error) {
+	var orders []PendingOrder
 	err := r.db.WithContext(ctx).Table("tms_order").
 		Select("id, order_no, origin_name, dest_name").
 		Where("status = ? AND deleted_at IS NULL", "pending_dispatch").
