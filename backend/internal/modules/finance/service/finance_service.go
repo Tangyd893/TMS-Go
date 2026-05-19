@@ -108,7 +108,7 @@ func (s *financeService) GenerateFees(ctx context.Context, orderID, customerID, 
 			FeeItemName: "运费",
 			Amount:      amount * 0.8,
 			TotalAmount: amount * 0.8,
-			Status:      string(ReceivableStatusSettled),
+			Status:      "pending",
 			CreatedAt:   now,
 			UpdatedAt:   now,
 		}
@@ -165,11 +165,17 @@ func (s *financeService) CreateSettlement(ctx context.Context, statementID strin
 	settleNo := fmt.Sprintf("STL%s%04d", now.Format("20060102150405"), now.Nanosecond()%10000)
 	stmtUID := uuid.MustParse(statementID)
 
+	stmt, err := s.repo.FindStatementByID(ctx, stmtUID)
+	if err != nil {
+		return nil, ErrStatementNotFound
+	}
+
 	settle := &model.Settlement{
 		SettlementNo:  settleNo,
 		StatementID:   stmtUID,
-		PartnerID:     uuid.New(),
-		PartnerType:   "customer",
+		PartnerID:     stmt.PartnerID,
+		PartnerName:   stmt.PartnerName,
+		PartnerType:   stmt.PartnerType,
 		Status:        model.SettlementStatusPending,
 		CreatedAt:     now,
 		UpdatedAt:     now,

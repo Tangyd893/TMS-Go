@@ -92,17 +92,21 @@ func (s *dispatchService) Assign(ctx context.Context, id string, detailID string
 
 	for i := range plan.Details {
 		if plan.Details[i].ID.String() == detailID {
+			d := &plan.Details[i]
 			if vehicleID != nil {
 				vid := uuid.MustParse(*vehicleID)
-				plan.Details[i].VehicleID = &vid
+				d.VehicleID = &vid
 			}
 			if driverID != nil {
 				did := uuid.MustParse(*driverID)
-				plan.Details[i].DriverID = &did
+				d.DriverID = &did
 			}
 			if carrierID != nil {
 				cid := uuid.MustParse(*carrierID)
-				plan.Details[i].CarrierID = &cid
+				d.CarrierID = &cid
+			}
+			if err := s.repo.UpdateDetail(ctx, d.ID, d); err != nil {
+				return err
 			}
 		}
 	}

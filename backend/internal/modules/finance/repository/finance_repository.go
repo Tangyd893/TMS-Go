@@ -18,6 +18,7 @@ type FinanceRepository interface {
 	ListStatements(ctx context.Context, page, pageSize int) ([]model.Statement, int64, error)
 	CreateStatement(ctx context.Context, s *model.Statement) error
 	ConfirmStatement(ctx context.Context, id uuid.UUID, confirmedBy uuid.UUID) error
+	FindStatementByID(ctx context.Context, id uuid.UUID) (*model.Statement, error)
 	ListSettlements(ctx context.Context, page, pageSize int) ([]model.Settlement, int64, error)
 	CreateSettlement(ctx context.Context, s *model.Settlement) error
 	CompleteSettlement(ctx context.Context, id uuid.UUID) error
@@ -89,6 +90,12 @@ func (r *financeRepository) ListStatements(ctx context.Context, page, pageSize i
 
 func (r *financeRepository) CreateStatement(ctx context.Context, s *model.Statement) error {
 	return r.db.WithContext(ctx).Create(s).Error
+}
+
+func (r *financeRepository) FindStatementByID(ctx context.Context, id uuid.UUID) (*model.Statement, error) {
+	var s model.Statement
+	err := r.db.WithContext(ctx).First(&s, "id = ?", id).Error
+	return &s, err
 }
 
 func (r *financeRepository) ConfirmStatement(ctx context.Context, id uuid.UUID, confirmedBy uuid.UUID) error {

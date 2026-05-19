@@ -14,6 +14,7 @@ type DispatchRepository interface {
 	FindByID(ctx context.Context, id uuid.UUID) (*model.DispatchPlan, error)
 	Create(ctx context.Context, plan *model.DispatchPlan) error
 	UpdateStatus(ctx context.Context, id uuid.UUID, status string) error
+	UpdateDetail(ctx context.Context, id uuid.UUID, detail *model.DispatchDetail) error
 	FindPendingOrders(ctx context.Context) ([]pendingOrder, error)
 }
 
@@ -74,4 +75,13 @@ func (r *dispatchRepository) FindPendingOrders(ctx context.Context) ([]pendingOr
 		Where("status = ? AND deleted_at IS NULL", "pending_dispatch").
 		Order("created_at desc").Find(&orders).Error
 	return orders, err
+}
+
+func (r *dispatchRepository) UpdateDetail(ctx context.Context, id uuid.UUID, detail *model.DispatchDetail) error {
+	return r.db.WithContext(ctx).Model(&model.DispatchDetail{}).Where("id = ?", id).
+		Updates(map[string]any{
+			"vehicle_id": detail.VehicleID,
+			"driver_id":  detail.DriverID,
+			"carrier_id": detail.CarrierID,
+		}).Error
 }
