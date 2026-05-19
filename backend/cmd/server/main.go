@@ -12,6 +12,7 @@ import (
 
 	"github.com/Tangyd893/TMS-Go/backend/internal/bootstrap"
 	"github.com/Tangyd893/TMS-Go/backend/internal/config"
+	"github.com/Tangyd893/TMS-Go/backend/internal/platform/database"
 	"github.com/Tangyd893/TMS-Go/backend/internal/platform/logger"
 )
 
@@ -19,7 +20,13 @@ func main() {
 	cfg := config.Load()
 	log := logger.New(cfg.App.Env)
 
-	server := bootstrap.NewHTTPServer(cfg, log)
+	db, err := database.New(cfg.Database, log)
+	if err != nil {
+		log.Error("failed to initialize database", slog.Any("error", err))
+		os.Exit(1)
+	}
+
+	server := bootstrap.NewHTTPServer(cfg, log, db)
 
 	go func() {
 		log.Info("starting http server", slog.String("addr", server.Addr))

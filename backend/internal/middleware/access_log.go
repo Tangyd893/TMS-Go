@@ -4,6 +4,8 @@ import (
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/Tangyd893/TMS-Go/backend/internal/platform/requestid"
 )
 
 type statusRecorder struct {
@@ -29,7 +31,7 @@ func AccessLog(log *slog.Logger) func(http.Handler) http.Handler {
 
 			log.Info(
 				"http request completed",
-				slog.String("requestId", RequestIDFromContext(r.Context())),
+				slog.String("requestId", requestid.FromContext(r.Context())),
 				slog.String("method", r.Method),
 				slog.String("path", r.URL.Path),
 				slog.Int("status", recorder.status),

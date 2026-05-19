@@ -1,10 +1,17 @@
-import axios from 'axios'
+import axios, { type AxiosResponse } from 'axios'
 
 export interface ApiResponse<T> {
   code: number
   message: string
   data: T
   traceId?: string
+}
+
+export interface PageResult<T> {
+  items: T[]
+  total: number
+  page: number
+  pageSize: number
 }
 
 export const request = axios.create({
@@ -20,10 +27,10 @@ request.interceptors.request.use((config) => {
   return config
 })
 
-request.interceptors.response.use((response) => {
-  const body = response.data as ApiResponse<unknown>
+request.interceptors.response.use((response: AxiosResponse<ApiResponse<unknown>>) => {
+  const body = response.data
   if (body.code === 0) {
-    return body.data
+    return body.data as any
   }
   return Promise.reject(body)
 })

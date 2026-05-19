@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/Tangyd893/TMS-Go/backend/internal/middleware"
+	"github.com/Tangyd893/TMS-Go/backend/internal/platform/requestid"
 )
 
 type Body struct {
@@ -19,7 +19,7 @@ func Success(w http.ResponseWriter, r *http.Request, data any) {
 		Code:    0,
 		Message: "success",
 		Data:    data,
-		TraceID: middleware.RequestIDFromContext(r.Context()),
+		TraceID: requestid.FromContext(r.Context()),
 	})
 }
 
@@ -28,7 +28,7 @@ func Fail(w http.ResponseWriter, r *http.Request, status int, code int, message 
 		Code:    code,
 		Message: message,
 		Data:    data,
-		TraceID: middleware.RequestIDFromContext(r.Context()),
+		TraceID: requestid.FromContext(r.Context()),
 	})
 }
 

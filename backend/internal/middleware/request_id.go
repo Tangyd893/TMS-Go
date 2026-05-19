@@ -1,35 +1,24 @@
 package middleware
 
 import (
-	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"net/http"
+
+	"github.com/Tangyd893/TMS-Go/backend/internal/platform/requestid"
 )
-
-const RequestIDHeader = "X-Request-Id"
-
-type requestIDKey struct{}
 
 func RequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		requestID := r.Header.Get(RequestIDHeader)
-		if requestID == "" {
-			requestID = newRequestID()
+		id := r.Header.Get(requestid.Header)
+		if id == "" {
+			id = newRequestID()
 		}
 
-		w.Header().Set(RequestIDHeader, requestID)
-		ctx := context.WithValue(r.Context(), requestIDKey{}, requestID)
+		w.Header().Set(requestid.Header, id)
+		ctx := requestid.WithContext(r.Context(), id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-}
-
-func RequestIDFromContext(ctx context.Context) string {
-	value, ok := ctx.Value(requestIDKey{}).(string)
-	if !ok {
-		return ""
-	}
-	return value
 }
 
 func newRequestID() string {
