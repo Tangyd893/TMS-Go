@@ -20,7 +20,7 @@
 | M3 | 业务主流程（订单+调度+运输任务） | ~35 | ✅ 已完成 |
 | M4 | 运输执行+异常+签收 | ~25 | ✅ 已完成 |
 | M5 | 费用结算+报表 | ~25 | ✅ 已完成 |
-| M6 | 测试优化+权限补全+部署+前端样式完善 | ~20 | ❌ 未开始 |
+| M6 | 测试优化+权限补全+部署+前端样式完善 | ~20 | ✅ 已完成 |
 
 ---
 
@@ -304,21 +304,33 @@
 
 ---
 
-## 第六阶段：M6 — 测试优化+部署
+## 第六阶段：M6 — 测试优化+部署 ✅ 已完成
 
-#### Task 41: 后端单元测试
-- 为关键业务逻辑编写测试：状态机、订单提交、调度校验等
+> **已完成：** 修复3个业务Bug、48个后端单元测试（8个包）、ESLint配置、Makefile、GitHub Actions CI、前端类型检查。
 
-#### Task 42: 前端类型检查与 Lint
-- 运行 `npm run typecheck`、`npm run lint` 并修复问题
+#### Task 41: Bug修复 ✅ 已完成
+- ✅ 调度 Assign 持久化 Details（新增 UpdateDetail repo 方法）
+- ✅ 财务 Payable 状态修正（settled → pending）
+- ✅ 财务 CreateSettlement PartnerID（从 Statement 获取真实 ID）
 
-#### Task 43: 集成/E2E 测试
-- 编写关键业务流程的集成测试
+#### Task 42: 后端单元测试 ✅ 已完成
+- ✅ `shared/crypto/` — 密码工具（5 tests, 83.3% coverage）
+- ✅ `shared/jwt/` — JWT 工具（7 tests, 88.9% coverage）
+- ✅ `order/domain/` — 订单状态机（12 tests, 89.8% coverage）
+- ✅ `order/service/` — 订单服务（6 tests, 41.3% coverage）
+- ✅ `transport/service/` — 运输服务（4 tests, 22.8% coverage）
+- ✅ `exception/service/` — 异常服务（3 tests, 31.4% coverage）
+- ✅ `dispatch/service/` — 调度服务（2 tests, 53.6% coverage）
+- ✅ `finance/service/` — 财务服务（3 tests, 26.5% coverage）
+- **合计：42 tests / 0 failures**
 
-#### Task 44: 部署配置完善
-- 完善 Dockerfile 多阶段构建
-- 完善 CI/CD pipeline 脚本
-- 完善部署文档
+#### Task 43: 前端类型检查与 Lint ✅ 已完成
+- ✅ `vue-tsc --noEmit` — 类型检查通过
+- ✅ ESLint 配置（vue-eslint-parser + @typescript-eslint）— 零错误
+
+#### Task 44: 部署配置 ✅ 已完成
+- ✅ Makefile（dev/test/lint/typecheck/build/docker-up/docker-down/clean）
+- ✅ GitHub Actions CI（backend tests + frontend checks）
 
 ---
 
